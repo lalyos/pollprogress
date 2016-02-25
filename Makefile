@@ -1,0 +1,17 @@
+VERSION=0.1.0
+OWNER=$(shell glu info| sed -n "s/Owner: //p")
+
+build:
+	glu build $(shell uname)
+
+install: build
+	cp build/$(shell uname)/pollprogress /usr/local/bin
+	
+release:
+	glu build linux,darwin
+	glu release
+
+generate-license:
+	@echo $(shell curl -sH "Accept: application/vnd.github.drax-preview+json" https://api.github.com/licenses/mit | jq .body |sed "s/\[year\] \[fullname\]/$(shell date +%Y) $(OWNER)/" ) > LICENSE
+
+.PHONY: build release
